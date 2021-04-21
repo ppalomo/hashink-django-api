@@ -1,0 +1,1 @@
+web: gunicorn hashink_api.wsgi
