@@ -1,3 +1,4 @@
+- Show signed_at in requests query
 - Hide database authentication
 - Implement token authentication
 - Rename images on upload

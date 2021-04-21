@@ -42,6 +42,8 @@ class GroupSig(models.Model):
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    signers = models.ManyToManyField(
+        Signer, related_name='groups', blank=True, through='GroupSig_Signer')
 
     class Meta:
         verbose_name = "groupsig"
@@ -50,6 +52,13 @@ class GroupSig(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GroupSig_Signer(models.Model):
+    groupsig = models.ForeignKey(GroupSig, models.CASCADE)
+    signer = models.ForeignKey(Signer, models.CASCADE)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Request(models.Model):

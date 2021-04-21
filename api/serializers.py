@@ -26,10 +26,11 @@ class GroupSigDetailSerializer(serializers.ModelSerializer):
 
 
 class GroupSigListSerializer(serializers.ModelSerializer):
+    signers = SignerListSerializer(many=True)
 
     class Meta:
         model = GroupSig
-        fields = ('name', 'price', 'response_time')
+        fields = ('name', 'price', 'response_time', 'signers')
 
 
 class RequestDetailSerializer(serializers.ModelSerializer):
@@ -46,3 +47,4 @@ class RequestListSerializer(serializers.ModelSerializer):
         model = Request
         fields = ('requester_address', 'name', 'price',
                   'response_time', 'state', 'groupsig', 'signer', 'signers')
+        depth = 1
