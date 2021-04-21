@@ -1,0 +1,3 @@
+- Hide database authentication
+- Implement token authentication
+- Rename images on upload
