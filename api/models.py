@@ -60,6 +60,14 @@ class GroupSig_Signer(models.Model):
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "groupsig signer"
+        verbose_name_plural = "groupsig signers"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return "{} - {}".format(self.groupsig.name, self.signer.full_name)
+
 
 class Request(models.Model):
     requester_address = models.CharField(max_length=50, null=True, blank=True)

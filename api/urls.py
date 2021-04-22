@@ -3,9 +3,9 @@ from rest_framework import routers
 from .views import SignerViewSet, GroupSigViewSet, RequestViewSet
 
 router = routers.DefaultRouter()
-router.register('signers', SignerViewSet)
-router.register('groupsigs', GroupSigViewSet)
-router.register('requests', RequestViewSet)
+router.register('signer', SignerViewSet)
+router.register('groupsig', GroupSigViewSet)
+router.register('request', RequestViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
