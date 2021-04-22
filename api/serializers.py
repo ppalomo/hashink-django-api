@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Signer, GroupSig, Request
+from api.models import Signer, GroupSig, Request, Request_Signer
 
 
 class SignerDetailSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class SignerListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Signer
-        fields = ('full_name', 'address', 'price', 'response_time')
+        fields = ('id', 'full_name', 'address', 'price', 'response_time')
 
 
 class GroupSigDetailSerializer(serializers.ModelSerializer):
@@ -33,18 +33,26 @@ class GroupSigListSerializer(serializers.ModelSerializer):
         fields = ('name', 'price', 'response_time', 'signers')
 
 
+class Request_SignerSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField(source='signer.full_name')
+    address = serializers.ReadOnlyField(source='signer.address')
+
+    class Meta:
+        model = Request_Signer
+        fields = ('id', 'full_name', 'address', 'signed_at', 'is_signed')
+
+
 class RequestDetailSerializer(serializers.ModelSerializer):
+    signers = Request_SignerSerializer(source='request_signer_set', many=True)
 
     class Meta:
         model = Request
-        fields = '__all__'
+        fields = ('id', 'requester_address', 'name', 'price',
+                  'response_time', 'state', 'groupsig', 'signer', 'signers', 'created_at', 'updated_at')
 
 
 class RequestListSerializer(serializers.ModelSerializer):
-    signers = SignerListSerializer(many=True)
-
     class Meta:
         model = Request
-        fields = ('requester_address', 'name', 'price',
-                  'response_time', 'state', 'groupsig', 'signer', 'signers')
-        depth = 1
+        fields = ('id', 'requester_address', 'name', 'price',
+                  'response_time', 'state', 'signers')

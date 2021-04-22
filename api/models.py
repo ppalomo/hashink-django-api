@@ -92,3 +92,7 @@ class Request_Signer(models.Model):
     request = models.ForeignKey(Request, models.CASCADE)
     signer = models.ForeignKey(Signer, models.CASCADE)
     signed_at = models.DateTimeField(null=True)
+
+    @property
+    def is_signed(self):
+        return True if self.signed_at is None else False
