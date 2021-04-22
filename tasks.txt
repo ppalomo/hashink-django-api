@@ -1,4 +1,3 @@
-- Show signed_at in requests query
 - Hide database authentication
 - Implement token authentication
 - Rename images on upload
@@ -6,17 +5,17 @@
 
 Methods:
 ==============================================
-- Get signers list (/api/signer/)
-- Get groupsigs list (/api/groupsig/)
++ Get signers list (/api/signer/)
++ Get groupsigs list (/api/groupsig/)
 - Get signers + groupsigs list
     + categories
-- Get signer detail
-- Get groupsig detail
++ Get signer detail (/api/signer/1/)
+    + group requests list
++ Get groupsig detail (/api/groupsig/1/)
     + group signers list
-- Get signer requests list
-- Get groupsig requests list
+    + group requests list
 - Get user requests list
-- Get request detail
+- Get request detail (/api/request/7/)
 - Get categories list
 - Get autographs collection by user
 - Get autographs collection by signer

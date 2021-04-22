@@ -38,12 +38,7 @@ class SignerViewSet(viewsets.ModelViewSet):
 class GroupSigViewSet(viewsets.ModelViewSet):
     queryset = GroupSig.objects.all()
 
-    # def get_queryset(self):
-    #     return GroupSig.objects.filter(active=True)
-
     def get_serializer_class(self):
-        # if self.action == 'list':
-        #     return GroupSigListSerializer
         if self.action == 'retrieve':
             return GroupSigDetailSerializer
         return GroupSigDetailSerializer

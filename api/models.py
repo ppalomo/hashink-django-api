@@ -103,4 +103,4 @@ class Request_Signer(models.Model):
 
     @property
     def is_signed(self):
-        return True if self.signed_at is None else False
+        return True if self.signed_at is not None else False

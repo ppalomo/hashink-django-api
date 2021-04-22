@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signer
 
+# region Signer
+
 
 class SignerListSerializer(serializers.ModelSerializer):
 
@@ -11,33 +13,64 @@ class SignerListSerializer(serializers.ModelSerializer):
 
 
 class SignerDetailSerializer(serializers.ModelSerializer):
+    requests = serializers.SerializerMethodField('get_requests')
+
+    def get_requests(self, signer):
+        qs = Request_Signer.objects.filter(
+            signer=signer)
+        serializer = Request_SignerSerializer(instance=qs, many=True)
+        return serializer.data
 
     class Meta:
         model = Signer
         fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'price',
-                  'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at')
+                  'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests')
+
+# endregion
+
+# region GroupSig_Signer
 
 
 class GroupSig_SignerSerializer(serializers.ModelSerializer):
     full_name = serializers.ReadOnlyField(source='signer.full_name')
     address = serializers.ReadOnlyField(source='signer.address')
+    avatar = serializers.ImageField(source='signer.avatar')
 
     class Meta:
         model = GroupSig_Signer
-        fields = ('id', 'full_name', 'address')
+        fields = ('id', 'full_name', 'address', 'avatar')
+
+# endregion
+
+# region GroupSig
 
 
 class GroupSigDetailSerializer(serializers.ModelSerializer):
+    signers = serializers.SerializerMethodField('get_signers')
+    requests = serializers.SerializerMethodField('get_requests')
+
+    def get_signers(self, groupsig):
+        qs = GroupSig_Signer.objects.filter(
+            groupsig=groupsig, active=True, signer__active=True)
+        serializer = GroupSig_SignerSerializer(instance=qs, many=True)
+        return serializer.data
+
+    def get_requests(self, groupsig):
+        qs = Request.objects.filter(
+            groupsig=groupsig)
+        serializer = RequestListSerializer(instance=qs, many=True)
+        return serializer.data
 
     class Meta:
         model = GroupSig
-        fields = '__all__'
+        fields = ('id', 'name', 'price', 'response_time',
+                  'avatar', 'signers', 'requests')
 
 
 class GroupSigListSerializer(serializers.ModelSerializer):
-    signers = serializers.SerializerMethodField('get_active_signers')
+    signers = serializers.SerializerMethodField('get_signers')
 
-    def get_active_signers(self, groupsig):
+    def get_signers(self, groupsig):
         qs = GroupSig_Signer.objects.filter(
             groupsig=groupsig, active=True, signer__active=True)
         serializer = GroupSig_SignerSerializer(instance=qs, many=True)
@@ -45,16 +78,28 @@ class GroupSigListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupSig
-        fields = ('name', 'price', 'response_time', 'avatar', 'signers')
+        fields = ('id', 'name', 'price', 'response_time', 'avatar', 'signers')
+
+# endregion
+
+# region Request_Signer
 
 
 class Request_SignerSerializer(serializers.ModelSerializer):
+    request_id = serializers.ReadOnlyField(source='request.id')
+    signer_id = serializers.ReadOnlyField(source='signer.id')
+    name = serializers.ReadOnlyField(source='request.name')
     full_name = serializers.ReadOnlyField(source='signer.full_name')
     address = serializers.ReadOnlyField(source='signer.address')
 
     class Meta:
         model = Request_Signer
-        fields = ('id', 'full_name', 'address', 'signed_at', 'is_signed')
+        fields = ('request_id', 'signer_id', 'name', 'full_name',
+                  'address', 'signed_at', 'is_signed')
+
+# endregion
+
+# region Request
 
 
 class RequestDetailSerializer(serializers.ModelSerializer):
@@ -67,10 +112,11 @@ class RequestDetailSerializer(serializers.ModelSerializer):
 
 
 class RequestListSerializer(serializers.ModelSerializer):
-    signers = serializers.SerializerMethodField('get_active_signers')
+    signers = serializers.SerializerMethodField('get_signers')
 
-    def get_active_signers(self, request):
-        qs = Request_Signer.objects.filter(signer__active=True)
+    def get_signers(self, request):
+        qs = Request_Signer.objects.filter(
+            request=request, signer__active=True)
         serializer = Request_SignerSerializer(instance=qs, many=True)
         return serializer.data
 
@@ -79,15 +125,4 @@ class RequestListSerializer(serializers.ModelSerializer):
         fields = ('id', 'requester_address', 'name', 'price',
                   'response_time', 'state', 'signers')
 
-# class RequestListSerializer(serializers.ModelSerializer):
-#     signers = serializers.SerializerMethodField('get_active_signers')
-
-#     def get_active_signers(self, request):
-#         qs = Signer.objects.filter(active=True)
-#         serializer = SignerListSerializer(instance=qs, many=True)
-#         return serializer.data
-
-#     class Meta:
-#         model = Request
-#         fields = ('id', 'requester_address', 'name', 'price',
-#                   'response_time', 'state', 'signers')
+# endregion
