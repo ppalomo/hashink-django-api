@@ -14,6 +14,8 @@ from .serializers import RequestListSerializer, RequestDetailSerializer
 # partial_update() (PATCH, /date-list/<id>/
 # destroy() (DELETE /date-list/<id>/)
 
+# region Signer
+
 
 class SignerViewSet(viewsets.ModelViewSet):
     queryset = Signer.objects.all()
@@ -34,6 +36,10 @@ class SignerViewSet(viewsets.ModelViewSet):
     #     serializer = UserSerializer(user)
     #     return Response(serializer.data)
 
+# endregion
+
+# region GroupSig
+
 
 class GroupSigViewSet(viewsets.ModelViewSet):
     queryset = GroupSig.objects.all()
@@ -48,9 +54,23 @@ class GroupSigViewSet(viewsets.ModelViewSet):
         serializer = GroupSigListSerializer(queryset, many=True)
         return Response(serializer.data)
 
+# endregion
+
+# region Request
+
+
+class RequestListFilter(filters.FilterSet):
+
+    class Meta:
+        model = Request
+        fields = {
+            'requester_address': ['iexact']
+        }
+
 
 class RequestViewSet(viewsets.ModelViewSet):
-    queryset = Request.objects.all()  # .filter(signer__response_time=2)
+    queryset = Request.objects.all()
+    filterset_class = RequestListFilter
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -58,6 +78,8 @@ class RequestViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return RequestDetailSerializer
         return RequestDetailSerializer
+
+# endregion
 
 # class UserViewSet(viewsets.ViewSet):
 #     """

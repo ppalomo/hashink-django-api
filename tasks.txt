@@ -14,8 +14,8 @@ Methods:
 + Get groupsig detail (/api/groupsig/1/)
     + group signers list
     + group requests list
-- Get user requests list
-- Get request detail (/api/request/7/)
++ Get user requests list (/api/request/?requester_address__iexact=0x0C0415367083319f5beE98aC6b63094C94f4F742)
++ Get request detail (/api/request/7/)
 - Get categories list
 - Get autographs collection by user
 - Get autographs collection by signer
