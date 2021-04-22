@@ -16,8 +16,7 @@ class SignerDetailSerializer(serializers.ModelSerializer):
     requests = serializers.SerializerMethodField('get_requests')
 
     def get_requests(self, signer):
-        qs = Request_Signer.objects.filter(
-            signer=signer)
+        qs = Request_Signer.objects.filter(signer=signer)
         serializer = Request_SignerSerializer(instance=qs, many=True)
         return serializer.data
 

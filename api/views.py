@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
-from api.models import Signer, GroupSig, Request
+from api.models import Signer, GroupSig, GroupSig_Signer, Request
 from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
@@ -69,41 +69,53 @@ class RequestListFilter(filters.FilterSet):
 
 
 class RequestViewSet(viewsets.ModelViewSet):
+    serializer_class = RequestDetailSerializer
     queryset = Request.objects.all()
-    filterset_class = RequestListFilter
+    # filterset_class = RequestListFilter
 
     def get_serializer_class(self):
         if self.action == 'list':
             return RequestListSerializer
         if self.action == 'retrieve':
             return RequestDetailSerializer
+        if self.action == 'create':
+            return RequestDetailSerializer
         return RequestDetailSerializer
 
+    def create(self, request, *args, **kwargs):
+        requester_address = request.data.get('requester_address', None)
+        signer_id = request.data.get('signer_id', None)
+        groupsig_id = request.data.get('groupsig_id', None)
+
+        if signer_id is not None:
+            signer = Signer.objects.get(pk=signer_id)
+            groupsig = None
+            price = signer.price
+            response_time = signer.response_time
+            signers = [signer]
+
+        if groupsig_id is not None:
+            groupsig = GroupSig.objects.get(pk=groupsig_id)
+            signer = None
+            price = groupsig.price
+            response_time = groupsig.response_time
+            signers = GroupSig_Signer.objects.filter(groupsig_id=groupsig_id)
+            # for x in gsigners:
+            #     print(x.)
+
+        new_request = Request.objects.create(
+            requester_address=requester_address,
+            price=price,
+            response_time=response_time,
+            signer=signer,
+            groupsig=groupsig
+        )
+
+        new_request.signers.set(signers)
+        # new_request.save()
+        serializer = RequestDetailSerializer(new_request)
+        return Response(serializer.data)
+
+        # return Response(None)
+
 # endregion
-
-# class UserViewSet(viewsets.ViewSet):
-#     """
-#     Example empty viewset demonstrating the standard
-#     actions that will be handled by a router class.
-
-#     If you're using format suffixes, make sure to also include
-#     the `format=None` keyword argument for each action.
-#     """
-
-#     def list(self, request):
-#         pass
-
-#     def create(self, request):
-#         pass
-
-#     def retrieve(self, request, pk=None):
-#         pass
-
-#     def update(self, request, pk=None):
-#         pass
-
-#     def partial_update(self, request, pk=None):
-#         pass
-
-#     def destroy(self, request, pk=None):
-#         pass

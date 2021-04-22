@@ -1,5 +1,7 @@
 from django.db import models
 
+# region Signer
+
 
 class Signer(models.Model):
     first_name = models.CharField(max_length=50, blank=False)
@@ -32,6 +34,10 @@ class Signer(models.Model):
     def __str__(self):
         return self.full_name
 
+# endregion
+
+# region GroupSig
+
 
 class GroupSig(models.Model):
     name = models.CharField(max_length=50, blank=False)
@@ -51,7 +57,11 @@ class GroupSig(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.name
+        return "{} - {}".format(self.id, self.name)
+
+# endregion
+
+# region GroupSig_Signer
 
 
 class GroupSig_Signer(models.Model):
@@ -67,6 +77,10 @@ class GroupSig_Signer(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.groupsig.name, self.signer.full_name)
+
+# endregion
+
+# region Request
 
 
 class Request(models.Model):
@@ -93,7 +107,11 @@ class Request(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return "{} - {}".format(self.signer.full_name if self.groupsig is None else self.groupsig.name, self.requester_address)
+        return "{} - {} - {}".format(self.id, self.signer.full_name if self.groupsig is None else self.groupsig.name, self.requester_address)
+
+# endregion
+
+# region Request_Signer
 
 
 class Request_Signer(models.Model):
@@ -104,3 +122,8 @@ class Request_Signer(models.Model):
     @property
     def is_signed(self):
         return True if self.signed_at is not None else False
+
+    def __str__(self):
+        return "{} - {}".format(self.request.id, self.signer.full_name)
+
+# endregion

@@ -21,11 +21,15 @@ Methods:
 - Get autographs collection by signer
 - Get autographs collection by groupsig !!!!!!!!!!!!!!
 
+- Create signer request
+- Create groupsig request
+    + add signers to request_signer
 - Update signer detail by signer
 - Update groupsig detail by signer
 - Sign request by signer
     + Update signed_at
 - Reject request by user
+- Add category to signer
 
 
 
