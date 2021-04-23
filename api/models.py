@@ -127,3 +127,24 @@ class Request_Signer(models.Model):
         return "{} - {}".format(self.request.id, self.signer.full_name)
 
 # endregion
+
+# region Category
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, blank=False)
+    parent_category = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.DO_NOTHING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "category"
+        verbose_name_plural = "categories"
+        ordering = ['id']
+
+    def __str__(self):
+        return "{} - {} ({})".format(self.id, self.name, self.parent_category)
+
+
+# endregion

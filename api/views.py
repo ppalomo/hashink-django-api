@@ -1,18 +1,12 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
-from api.models import Signer, GroupSig, GroupSig_Signer, Request
+from api.models import Signer, GroupSig, GroupSig_Signer, Request, Category
 from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
-
-# list() (GET /date-list/)
-# create()(POST /date-list/)
-# retrieve()(GET date-list/<id>/)
-# update() (PUT /date-list/<id>/)
-# partial_update() (PATCH, /date-list/<id>/
-# destroy() (DELETE /date-list/<id>/)
+from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer
 
 # region Signer
 
@@ -119,6 +113,20 @@ class RequestViewSet(viewsets.ModelViewSet):
         serializer = RequestDetailSerializer(new_request)
         return Response(serializer.data)
 
-        # return Response(None)
+# endregion
+
+# region Category
+
+
+class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Category.objects.all().order_by('name')
+    serializer_class = CategoryFlatListSerializer
+
+    @action(methods=['get'], detail=False)
+    def tree(self, request):
+        queryset = Category.objects.filter(
+            parent_category=None).order_by('name')
+        serializer = CategoryTreeListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 # endregion

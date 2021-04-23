@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signer
+from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signer, Category
 
 # region Signer
 
@@ -123,5 +123,30 @@ class RequestListSerializer(serializers.ModelSerializer):
         model = Request
         fields = ('id', 'requester_address', 'name', 'price',
                   'response_time', 'state', 'signers')
+
+# endregion
+
+# region Category
+
+
+class CategoryTreeListSerializer(serializers.ModelSerializer):
+    subcategories = serializers.SerializerMethodField('get_subcategories')
+
+    def get_subcategories(self, category):
+        qs = Category.objects.filter(
+            parent_category=category)
+        serializer = CategoryTreeListSerializer(instance=qs, many=True)
+        return serializer.data
+
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'subcategories')
+
+
+class CategoryFlatListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ('id', 'name')
 
 # endregion

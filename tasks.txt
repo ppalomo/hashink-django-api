@@ -21,8 +21,8 @@ Methods:
 - Get autographs collection by signer
 - Get autographs collection by groupsig !!!!!!!!!!!!!!
 
-- Create signer request
-- Create groupsig request
++ Create signer request (/api/request/ - POST)
++ Create groupsig request (/api/request/ - POST)
     + add signers to request_signer
 - Update signer detail by signer
 - Update groupsig detail by signer
