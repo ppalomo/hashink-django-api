@@ -7,7 +7,7 @@ from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
 from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
-from .serializers import SearchResultSerializer
+from .serializers import SignerGroupsigGenericSerializer
 from operator import itemgetter
 
 # region Signer
@@ -37,16 +37,16 @@ class SignerViewSet(viewsets.ModelViewSet):
         signers = Signer.objects.filter(active=True)
         groupsigs = GroupSig.objects.filter(active=True)
 
-        signers_data = [{'id': signer.id, 'name': signer.full_name, 'price_eth': signer.price_eth, 'response_time': signer.response_time, 'avatar': signer.avatar, 'is_groupsig': False}
+        signers_data = [{'id': signer.id, 'name': signer.full_name, 'price_eth': signer.price_eth, 'response_time': signer.response_time, 'avatar': signer.avatar, 'is_groupsig': False, 'categories': signer.categories}
                         for signer in signers]
 
-        groupsigs_data = [{'id': groupsig.id, 'name': groupsig.name, 'price_eth': groupsig.price_eth, 'response_time': groupsig.response_time, 'avatar': groupsig.avatar, 'is_groupsig': True}
+        groupsigs_data = [{'id': groupsig.id, 'name': groupsig.name, 'price_eth': groupsig.price_eth, 'response_time': groupsig.response_time, 'avatar': groupsig.avatar, 'is_groupsig': True, 'categories': None}
                           for groupsig in groupsigs]
 
         # Union and sorting
         data = sorted((signers_data + groupsigs_data), key=lambda o: o['name'])
 
-        serializer = SearchResultSerializer(data, many=True)
+        serializer = SignerGroupsigGenericSerializer(data, many=True)
         return Response(serializer.data)
 
 

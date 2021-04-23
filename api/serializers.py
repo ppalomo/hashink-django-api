@@ -26,14 +26,6 @@ class SignerDetailSerializer(serializers.ModelSerializer):
                   'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests')
 
 
-class SearchResultSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField()
-    price_eth = serializers.FloatField()
-    response_time = serializers.IntegerField()
-    avatar = serializers.ImageField()
-    is_groupsig = serializers.BooleanField()
-
 # endregion
 
 # region GroupSig_Signer
@@ -166,5 +158,29 @@ class CategorySignersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', 'signers')
+
+# endregion
+
+# region Generics
+
+
+class SignerGroupsigGenericSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    price_eth = serializers.FloatField()
+    response_time = serializers.IntegerField()
+    avatar = serializers.ImageField()
+    is_groupsig = serializers.BooleanField()
+
+    categories = serializers.SerializerMethodField('get_categories')
+
+    def get_categories(self, item):
+        if not item['is_groupsig']:
+            signer = Signer.objects.get(pk=item['id'])
+            serializer = CategoryFlatListSerializer(
+                instance=signer.categories.all(), many=True)
+            return serializer.data
+        elif item['is_groupsig']:
+            return None
 
 # endregion
