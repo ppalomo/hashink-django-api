@@ -93,15 +93,18 @@ class RequestViewSet(viewsets.ModelViewSet):
             price = signer.price
             response_time = signer.response_time
             signers = [signer]
-
-        if groupsig_id is not None:
+        elif groupsig_id is not None:
             groupsig = GroupSig.objects.get(pk=groupsig_id)
             signer = None
             price = groupsig.price
             response_time = groupsig.response_time
-            signers = GroupSig_Signer.objects.filter(groupsig_id=groupsig_id)
-            # for x in gsigners:
-            #     print(x.)
+            groupsig_signers = GroupSig_Signer.objects.filter(
+                groupsig_id=groupsig_id, active=True)
+            signers = []
+            for gs in groupsig_signers:
+                s = Signer.objects.get(pk=gs.signer_id)
+                if s.active:
+                    signers.append(s)
 
         new_request = Request.objects.create(
             requester_address=requester_address,
@@ -112,7 +115,7 @@ class RequestViewSet(viewsets.ModelViewSet):
         )
 
         new_request.signers.set(signers)
-        # new_request.save()
+        new_request.save()
         serializer = RequestDetailSerializer(new_request)
         return Response(serializer.data)
 
