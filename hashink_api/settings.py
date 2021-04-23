@@ -78,14 +78,15 @@ WSGI_APPLICATION = 'hashink_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+# heroku run python manage.py migrate -a <app-name>
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'NAME': 'hashink_api',
-        'USER': 'dbadmin',
-        'PASSWORD': 'postgres',
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'NAME': os.environ.get('DATABASE_NAME', 'hashink_api'),
+        'USER': os.environ.get('DATABASE_USER', 'dbadmin'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'postgres'),
         'PORT': 5432
     }
     # 'sqlite': {
