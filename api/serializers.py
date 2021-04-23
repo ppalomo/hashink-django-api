@@ -149,4 +149,12 @@ class CategoryFlatListSerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name')
 
+
+class CategorySignersListSerializer(serializers.ModelSerializer):
+    signers = SignerListSerializer(many=True)
+
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'signers')
+
 # endregion

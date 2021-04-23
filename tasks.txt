@@ -16,7 +16,9 @@ Methods:
     + group requests list
 + Get user requests list (/api/request/?requester_address__iexact=0x0C0415367083319f5beE98aC6b63094C94f4F742)
 + Get request detail (/api/request/7/)
-- Get categories list
++ Get categories flat list (/api/category/)
++ Get categories tree list (/api/category/tree)
++ Get signers by category (/api/category/1/signers/)
 - Get autographs collection by user
 - Get autographs collection by signer
 - Get autographs collection by groupsig !!!!!!!!!!!!!!

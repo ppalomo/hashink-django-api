@@ -137,6 +137,8 @@ class Category(models.Model):
         'self', null=True, blank=True, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    signers = models.ManyToManyField(
+        Signer, blank=True, related_name='categories')
 
     class Meta:
         verbose_name = "category"

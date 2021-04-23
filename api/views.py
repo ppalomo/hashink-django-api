@@ -6,7 +6,7 @@ from api.models import Signer, GroupSig, GroupSig_Signer, Request, Category
 from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
-from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer
+from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
 
 # region Signer
 
@@ -127,6 +127,12 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         queryset = Category.objects.filter(
             parent_category=None).order_by('name')
         serializer = CategoryTreeListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def signers(self, request, pk=None):
+        queryset = Category.objects.get(pk=pk)
+        serializer = CategorySignersListSerializer(queryset, many=False)
         return Response(serializer.data)
 
 # endregion
