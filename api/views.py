@@ -7,6 +7,8 @@ from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
 from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
+from .serializers import SearchResultSerializer
+from operator import itemgetter
 
 # region Signer
 
@@ -29,6 +31,24 @@ class SignerViewSet(viewsets.ModelViewSet):
     #     user = get_object_or_404(queryset, pk=pk)
     #     serializer = UserSerializer(user)
     #     return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def all(self, request, pk=None):
+        signers = Signer.objects.filter(active=True)
+        groupsigs = GroupSig.objects.filter(active=True)
+
+        signers_data = [{'id': signer.id, 'name': signer.full_name, 'price_eth': signer.price_eth, 'response_time': signer.response_time, 'avatar': signer.avatar, 'is_groupsig': False}
+                        for signer in signers]
+
+        groupsigs_data = [{'id': groupsig.id, 'name': groupsig.name, 'price_eth': groupsig.price_eth, 'response_time': groupsig.response_time, 'avatar': groupsig.avatar, 'is_groupsig': True}
+                          for groupsig in groupsigs]
+
+        # Union and sorting
+        data = sorted((signers_data + groupsigs_data), key=lambda o: o['name'])
+
+        serializer = SearchResultSerializer(data, many=True)
+        return Response(serializer.data)
+
 
 # endregion
 

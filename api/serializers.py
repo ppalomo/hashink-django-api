@@ -25,6 +25,15 @@ class SignerDetailSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'price',
                   'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests')
 
+
+class SearchResultSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    price_eth = serializers.FloatField()
+    response_time = serializers.IntegerField()
+    avatar = serializers.ImageField()
+    is_groupsig = serializers.BooleanField()
+
 # endregion
 
 # region GroupSig_Signer
@@ -77,7 +86,8 @@ class GroupSigListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupSig
-        fields = ('id', 'name', 'price', 'response_time', 'avatar', 'signers')
+        fields = ('id', 'name', 'price_eth',
+                  'response_time', 'avatar', 'signers')
 
 # endregion
 

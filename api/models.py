@@ -51,6 +51,10 @@ class GroupSig(models.Model):
     signers = models.ManyToManyField(
         Signer, related_name='groups', blank=True, through='GroupSig_Signer')
 
+    @property
+    def price_eth(self):
+        return self.price / 1e18
+
     class Meta:
         verbose_name = "groupsig"
         verbose_name_plural = "groupsigs"
