@@ -12,17 +12,18 @@ Methods:
 + Add categories collection to groupsigs
 + Add categories collection to signers+ groupsigs) (/api/category/1/)
 + Get signer detail (/api/signer/1/)
-    + group requests list
+    + requests list
 + Get groupsig detail (/api/groupsig/1/)
     + group signers list
     + group requests list
 + Get user requests list (/api/request/?requester_address__iexact=0x0C0415367083319f5beE98aC6b63094C94f4F742)
++ Get requests list
 + Get request detail (/api/request/7/)
 + Get categories flat list (/api/category/)
 + Get categories tree list (/api/category/tree)
 + Get signers by category (/api/category/1/signers/)
 + Get autographs collection by user (/api/autograph/owner/0x8d6f6ea2598e8b1dac9c434a1fcd579f507db18f/)
-+ Get autographs collection by signer (/api/autograph/creator/0x1fbd6bb7b158932a91ca0d0126fe87f31c9191a7/)
++ Get autographs collection by signer (/api/autograph/signer/0x1fbd6bb7b158932a91ca0d0126fe87f31c9191a7/)
 - Get autographs collection by groupsig !!!!!!!!!!!!!!
 
 + Create signer request (/api/request/ - POST)

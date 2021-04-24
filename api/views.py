@@ -214,8 +214,8 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         serializer = AutographSerializer(response['autographs'], many=True)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=False, url_path=r'creator/(?P<creator>\w+)')
-    def creator(self, request, *args, **kwargs):
+    @action(methods=['get'], detail=False, url_path=r'signer/(?P<signer>\w+)')
+    def signer(self, request, *args, **kwargs):
         sample_transport = RequestsHTTPTransport(
             url=get_subgraph_endpoint(),
             verify=True,
@@ -231,7 +231,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                     imageURI
                     metadataURI
                 }
-            }''' % '''creator:"{}"'''.format(kwargs['creator'])
+            }''' % '''creator:"{}"'''.format(kwargs['signer'])
         query = gql(query_string)
         response = client.execute(query)
         serializer = AutographSerializer(response['autographs'], many=True)
