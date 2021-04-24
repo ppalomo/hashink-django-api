@@ -36,5 +36,9 @@ Methods:
 - Add category to signer
 
 
+==> Filter for autographs
+==> Pagination for autographs
+
+
 
 

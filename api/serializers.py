@@ -192,7 +192,6 @@ class SignerGroupsigGenericSerializer(serializers.Serializer):
     response_time = serializers.IntegerField()
     avatar = serializers.ImageField()
     is_groupsig = serializers.BooleanField()
-
     categories = serializers.SerializerMethodField('get_categories')
 
     def get_categories(self, item):
@@ -206,5 +205,24 @@ class SignerGroupsigGenericSerializer(serializers.Serializer):
             serializer = CategoryFlatListSerializer(
                 instance=groupsig.categories.all(), many=True)
             return serializer.data
+
+# endregion
+
+# region Autograph
+
+
+class AutographSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    owner = serializers.CharField()
+    creator = serializers.CharField()
+    imageURI = serializers.CharField()
+    metadataURI = serializers.CharField()
+    signer = serializers.SerializerMethodField('get_signer')
+
+    def get_signer(self, item):
+        print(item['creator'])
+        signer = Signer.objects.filter(address__iexact=item['creator']).first()
+        serializer = SignerListSerializer(instance=signer, many=False)
+        return serializer.data
 
 # endregion

@@ -1,3 +1,5 @@
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -7,7 +9,7 @@ from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigListTreeSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
 from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
-from .serializers import SignerGroupsigGenericSerializer
+from .serializers import SignerGroupsigGenericSerializer, AutographSerializer
 from operator import itemgetter
 
 # region Signer
@@ -85,6 +87,7 @@ class RequestListFilter(filters.FilterSet):
 class RequestViewSet(viewsets.ModelViewSet):
     serializer_class = RequestDetailSerializer
     queryset = Request.objects.all()
+    filter_class = RequestListFilter
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -151,6 +154,49 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
         queryset = Category.objects.filter(
             parent_category=None).order_by('name')
         serializer = CategoryTreeListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+# endregion
+
+# region Autograph
+
+
+# class AutographListFilter(filters.FilterSet):
+
+#     class Meta:
+#         model = Request
+#         fields = {
+#             'owner': ['iexact']
+#         }
+
+
+class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Category.objects.all().order_by('name')
+    serializer_class = CategoryFlatListSerializer
+
+    def list(self, request):
+        sample_transport = RequestsHTTPTransport(
+            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            verify=True,
+            retries=3,
+        )
+
+        client = Client(
+            transport=sample_transport
+        )
+        query = gql('''
+            query {
+                autographs(first: 20) {
+                    id
+                    owner
+                    creator
+                    imageURI
+                    metadataURI
+                }
+            }
+        ''')
+        response = client.execute(query)
+        serializer = AutographSerializer(response['autographs'], many=True)
         return Response(serializer.data)
 
 # endregion
