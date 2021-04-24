@@ -1,4 +1,5 @@
 *.pyc
+/api/__pycache__
 
 # images
 /avatars

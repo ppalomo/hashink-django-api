@@ -1,3 +1,4 @@
+from .utils import get_subgraph_endpoint
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 from rest_framework import viewsets, mixins
@@ -167,7 +168,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def list(self, request):
         sample_transport = RequestsHTTPTransport(
-            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            url=get_subgraph_endpoint(),
             verify=True,
             retries=3,
         )
@@ -193,7 +194,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     @action(methods=['get'], detail=False, url_path=r'owner/(?P<owner>\w+)')
     def owner(self, request, *args, **kwargs):
         sample_transport = RequestsHTTPTransport(
-            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            url=get_subgraph_endpoint(),
             verify=True,
             retries=3,
         )
@@ -216,7 +217,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     @action(methods=['get'], detail=False, url_path=r'creator/(?P<creator>\w+)')
     def creator(self, request, *args, **kwargs):
         sample_transport = RequestsHTTPTransport(
-            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            url=get_subgraph_endpoint(),
             verify=True,
             retries=3,
         )
@@ -234,6 +235,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         query = gql(query_string)
         response = client.execute(query)
         serializer = AutographSerializer(response['autographs'], many=True)
+
         return Response(serializer.data)
 
 

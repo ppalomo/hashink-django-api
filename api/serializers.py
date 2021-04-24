@@ -220,7 +220,6 @@ class AutographSerializer(serializers.Serializer):
     signer = serializers.SerializerMethodField('get_signer')
 
     def get_signer(self, item):
-        print(item['creator'])
         signer = Signer.objects.filter(address__iexact=item['creator']).first()
         serializer = SignerListSerializer(instance=signer, many=False)
         return serializer.data
