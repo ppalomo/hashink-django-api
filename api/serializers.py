@@ -4,16 +4,25 @@ from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signe
 # region Signer
 
 
+class SignerCategoryListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = ('id', 'name')
+
+
 class SignerListSerializer(serializers.ModelSerializer):
+    categories = SignerCategoryListSerializer(many=True)
 
     class Meta:
         model = Signer
         fields = ('id', 'full_name', 'address', 'price_eth',
-                  'response_time', 'avatar', 'autograph', 'active')
+                  'response_time', 'avatar', 'autograph', 'active', 'categories')
 
 
 class SignerDetailSerializer(serializers.ModelSerializer):
     requests = serializers.SerializerMethodField('get_requests')
+    categories = SignerCategoryListSerializer(many=True)
 
     def get_requests(self, signer):
         qs = Request_Signer.objects.filter(signer=signer)
@@ -23,7 +32,7 @@ class SignerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Signer
         fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'price',
-                  'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests')
+                  'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests', 'categories')
 
 
 # endregion
@@ -48,6 +57,7 @@ class GroupSig_SignerSerializer(serializers.ModelSerializer):
 class GroupSigDetailSerializer(serializers.ModelSerializer):
     signers = serializers.SerializerMethodField('get_signers')
     requests = serializers.SerializerMethodField('get_requests')
+    categories = SignerCategoryListSerializer(many=True)
 
     def get_signers(self, groupsig):
         qs = GroupSig_Signer.objects.filter(
@@ -64,7 +74,7 @@ class GroupSigDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupSig
         fields = ('id', 'name', 'price', 'response_time',
-                  'avatar', 'signers', 'requests')
+                  'avatar', 'signers', 'requests', 'categories')
 
 
 class GroupSigListSerializer(serializers.ModelSerializer):
@@ -77,6 +87,7 @@ class GroupSigListSerializer(serializers.ModelSerializer):
 
 class GroupSigListTreeSerializer(serializers.ModelSerializer):
     signers = serializers.SerializerMethodField('get_signers')
+    categories = SignerCategoryListSerializer(many=True)
 
     def get_signers(self, groupsig):
         qs = GroupSig_Signer.objects.filter(
@@ -87,7 +98,7 @@ class GroupSigListTreeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupSig
         fields = ('id', 'name', 'price_eth',
-                  'response_time', 'avatar', 'signers')
+                  'response_time', 'avatar', 'signers', 'categories')
 
 
 # endregion
