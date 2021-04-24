@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,10 +85,10 @@ WSGI_APPLICATION = 'hashink_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'NAME': os.environ.get('DATABASE_NAME', 'hashink_api'),
-        'USER': os.environ.get('DATABASE_USER', 'dbadmin'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'postgres'),
+        'HOST': 'localhost',
+        'NAME': 'hashink_api',
+        'USER': 'dbadmin',
+        'PASSWORD': 'postgres',
         'PORT': 5432
     }
     # 'sqlite': {
@@ -95,6 +96,10 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
 }
+
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        default=os.environ['DATABASE_URL'])
 
 
 # Password validation
