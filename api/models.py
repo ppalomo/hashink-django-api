@@ -7,7 +7,8 @@ class Signer(models.Model):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(max_length=245, blank=False)
-    address = models.CharField(max_length=50, null=True, blank=True)
+    address = models.CharField(
+        max_length=50, null=True, blank=True, unique=True)
     price = models.FloatField(blank=False, default=0)
     response_time = models.IntegerField(blank=False, default=0)
     avatar = models.ImageField(
@@ -40,7 +41,7 @@ class Signer(models.Model):
 
 
 class GroupSig(models.Model):
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=False, unique=True)
     price = models.FloatField(blank=False, default=0)
     response_time = models.IntegerField(blank=False, default=0)
     avatar = models.ImageField(
@@ -136,7 +137,7 @@ class Request_Signer(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=False, unique=True)
     parent_category = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
