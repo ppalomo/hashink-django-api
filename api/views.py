@@ -161,15 +161,6 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
 # region Autograph
 
 
-# class AutographListFilter(filters.FilterSet):
-
-#     class Meta:
-#         model = Request
-#         fields = {
-#             'owner': ['iexact']
-#         }
-
-
 class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all().order_by('name')
     serializer_class = CategoryFlatListSerializer
@@ -198,5 +189,52 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         response = client.execute(query)
         serializer = AutographSerializer(response['autographs'], many=True)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=False, url_path=r'owner/(?P<owner>\w+)')
+    def owner(self, request, *args, **kwargs):
+        sample_transport = RequestsHTTPTransport(
+            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            verify=True,
+            retries=3,
+        )
+        client = Client(transport=sample_transport)
+        query_string = '''
+            query {
+                autographs(where:{%s}) {
+                    id
+                    owner
+                    creator
+                    imageURI
+                    metadataURI
+                }
+            }''' % '''owner:"{}"'''.format(kwargs['owner'])
+        query = gql(query_string)
+        response = client.execute(query)
+        serializer = AutographSerializer(response['autographs'], many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False, url_path=r'creator/(?P<creator>\w+)')
+    def creator(self, request, *args, **kwargs):
+        sample_transport = RequestsHTTPTransport(
+            url='https://api.thegraph.com/subgraphs/name/hashink/rinkeby',
+            verify=True,
+            retries=3,
+        )
+        client = Client(transport=sample_transport)
+        query_string = '''
+            query {
+                autographs(where:{%s}) {
+                    id
+                    owner
+                    creator
+                    imageURI
+                    metadataURI
+                }
+            }''' % '''creator:"{}"'''.format(kwargs['creator'])
+        query = gql(query_string)
+        response = client.execute(query)
+        serializer = AutographSerializer(response['autographs'], many=True)
+        return Response(serializer.data)
+
 
 # endregion
