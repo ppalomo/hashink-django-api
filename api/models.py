@@ -143,6 +143,8 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     signers = models.ManyToManyField(
         Signer, blank=True, related_name='categories')
+    groupsigs = models.ManyToManyField(
+        GroupSig, blank=True, related_name='categories')
 
     class Meta:
         verbose_name = "category"

@@ -8,7 +8,9 @@ Methods:
 + Get signers list (/api/signer/)
 + Get groupsigs list (/api/groupsig/)
 + Get signers + groupsigs list (/api/signer/all/)
-- Add categories collection to signers + groupsigs list
++ Add categories collection to signers
++ Add categories collection to groupsigs
++ Add categories collection to signers+ groupsigs)
 + Get signer detail (/api/signer/1/)
     + group requests list
 + Get groupsig detail (/api/groupsig/1/)

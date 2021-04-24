@@ -68,6 +68,14 @@ class GroupSigDetailSerializer(serializers.ModelSerializer):
 
 
 class GroupSigListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GroupSig
+        fields = ('id', 'name', 'price_eth',
+                  'response_time', 'avatar')
+
+
+class GroupSigListTreeSerializer(serializers.ModelSerializer):
     signers = serializers.SerializerMethodField('get_signers')
 
     def get_signers(self, groupsig):
@@ -80,6 +88,7 @@ class GroupSigListSerializer(serializers.ModelSerializer):
         model = GroupSig
         fields = ('id', 'name', 'price_eth',
                   'response_time', 'avatar', 'signers')
+
 
 # endregion
 
@@ -154,10 +163,11 @@ class CategoryFlatListSerializer(serializers.ModelSerializer):
 
 class CategorySignersListSerializer(serializers.ModelSerializer):
     signers = SignerListSerializer(many=True)
+    groupsigs = GroupSigListSerializer(many=True)
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'signers')
+        fields = ('id', 'name', 'groupsigs', 'signers')
 
 # endregion
 
@@ -181,6 +191,9 @@ class SignerGroupsigGenericSerializer(serializers.Serializer):
                 instance=signer.categories.all(), many=True)
             return serializer.data
         elif item['is_groupsig']:
-            return None
+            groupsig = GroupSig.objects.get(pk=item['id'])
+            serializer = CategoryFlatListSerializer(
+                instance=groupsig.categories.all(), many=True)
+            return serializer.data
 
 # endregion

@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from django_filters import rest_framework as filters
 from api.models import Signer, GroupSig, GroupSig_Signer, Request, Category
 from .serializers import SignerListSerializer, SignerDetailSerializer
-from .serializers import GroupSigListSerializer, GroupSigDetailSerializer
+from .serializers import GroupSigListSerializer, GroupSigListTreeSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
 from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
 from .serializers import SignerGroupsigGenericSerializer
@@ -65,7 +65,7 @@ class GroupSigViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = GroupSig.objects.filter(active=True)
-        serializer = GroupSigListSerializer(queryset, many=True)
+        serializer = GroupSigListTreeSerializer(queryset, many=True)
         return Response(serializer.data)
 
 # endregion
@@ -85,7 +85,6 @@ class RequestListFilter(filters.FilterSet):
 class RequestViewSet(viewsets.ModelViewSet):
     serializer_class = RequestDetailSerializer
     queryset = Request.objects.all()
-    # filterset_class = RequestListFilter
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -138,21 +137,20 @@ class RequestViewSet(viewsets.ModelViewSet):
 # region Category
 
 
-class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all().order_by('name')
     serializer_class = CategoryFlatListSerializer
+
+    def retrieve(self, request, pk=None):
+        queryset = Category.objects.get(pk=pk)
+        serializer = CategorySignersListSerializer(queryset, many=False)
+        return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def tree(self, request):
         queryset = Category.objects.filter(
             parent_category=None).order_by('name')
         serializer = CategoryTreeListSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @action(methods=['get'], detail=True)
-    def signers(self, request, pk=None):
-        queryset = Category.objects.get(pk=pk)
-        serializer = CategorySignersListSerializer(queryset, many=False)
         return Response(serializer.data)
 
 # endregion
