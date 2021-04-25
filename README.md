@@ -48,4 +48,3 @@ Method | Entity | URL | Remarks | Parameters
 ------ | ------ | --- | ------- | ----------
 GET | autograph | /api/autograph/owner/[requester_address]/ | Retrieve autographs by requester | -
 GET | autograph | /api/autograph/signer/[signer_address]/ | Retrieve autographs by signer | -
-
