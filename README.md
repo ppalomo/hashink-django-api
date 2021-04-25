@@ -4,6 +4,12 @@
 
 **Test:** https://hashink-api-test.herokuapp.com/
 
+
+## Database schema
+
+![alt text](https://github.com/HashInk/api/blob/develop/static/db_schema.jpeg?raw=true)
+
+
 ## Available methods
 
 ### Signer methods
@@ -48,3 +54,5 @@ Method | Entity | URL | Remarks | Parameters
 ------ | ------ | --- | ------- | ----------
 GET | autograph | /api/autograph/owner/[requester_address]/ | Retrieve autographs by requester | -
 GET | autograph | /api/autograph/signer/[signer_address]/ | Retrieve autographs by signer | -
+
+
