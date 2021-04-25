@@ -33,7 +33,7 @@ Methods:
 - Update groupsig detail by signer
 - Sign request by signer
     + Update signed_at
-- Reject request by user
++ Reject request by user (/api/request/31 Method=DELETE)
 - Add category to signer
 - Pagination for autographs
 

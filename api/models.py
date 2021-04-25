@@ -33,7 +33,7 @@ class Signer(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.full_name
+        return "{} - {}".format(self.id, self.full_name)
 
 # endregion
 

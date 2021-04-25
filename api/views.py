@@ -1,3 +1,5 @@
+import pytz
+import datetime
 from .utils import get_subgraph_endpoint
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
@@ -87,7 +89,7 @@ class RequestListFilter(filters.FilterSet):
 
 class RequestViewSet(viewsets.ModelViewSet):
     serializer_class = RequestDetailSerializer
-    queryset = Request.objects.all()
+    queryset = Request.objects.filter(state=0)
     filter_class = RequestListFilter
 
     def get_serializer_class(self):
@@ -136,6 +138,16 @@ class RequestViewSet(viewsets.ModelViewSet):
         serializer = RequestDetailSerializer(new_request)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        request = self.get_object()
+        # if datetime.datetime.now() >= pytz.UTC.localize(request.created_at.replace(tzinfo=pytz.UTC)) + datetime.timedelta(days=request.response_time):
+        request.state = 2
+        request.save()
+        return Response(data='delete success')
+        # else:
+        # return Response(None)
+
+
 # endregion
 
 # region Category
@@ -157,8 +169,21 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
         serializer = CategoryTreeListSerializer(queryset, many=True)
         return Response(serializer.data)
 
-# endregion
+    @action(methods=['post'], detail=True, url_path=r'(?P<category_id>\d+)/(?P<signer_id>\d+)')
+    def add_to_signer(self, request, *args, **kwargs):
+        category = Category.objects.get(pk=kwargs['category_id'])
+        signer = Signer.objects.get(pk=kwargs['signer_id'])
+        signer.categories.add(category)
+        return Response(data='Category added')
 
+    @action(methods=['delete'], detail=False, url_path=r'delete_from_signer/(?P<category_id>\d+)/(?P<signer_id>\d+)')
+    def delete_from_signer(self, request, *args, **kwargs):
+        category = Category.objects.get(pk=kwargs['category_id'])
+        signer = Signer.objects.get(pk=kwargs['signer_id'])
+        signer.categories.remove(category)
+        return Response(data='Category deleted')
+
+# endregion
 # region Autograph
 
 
