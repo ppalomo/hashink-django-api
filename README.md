@@ -83,3 +83,15 @@ Method=GET
 Method=GET
 /api/autograph/signer/[signer_address]/
 ```
+
+## Add category to signer
+```
+Method=POST
+/api/category/add_to_signer/[category_id]/[signer_id]/
+```
+
+## Remove category from signer
+```
+Method=DELETE
+/api/category/delete_from_signer/[category_id]/[signer_id]/
+```
