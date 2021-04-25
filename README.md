@@ -19,7 +19,6 @@ Method | Entity | URL | Remarks | Parameters
 GET | signer | /api/signer/ | Retrieve active signers list | -
 GET | signer | /api/signer/[signer_id]/ | Retrieve signer detail | -
 GET | signer | /api/signer/all/ | Retrieve signer and groups mixed list | -
-GET | signer | /api/category/[category_id]/signers/ | Retrieve signers by category | -
 
 ### Groupsig methods
 
@@ -45,6 +44,7 @@ Method | Entity | URL | Remarks | Parameters
 ------ | ------ | --- | ------- | ----------
 GET | category | /api/category/ | Retrieve categories flat list | -
 GET | category | /api/category/tree/ | Retrieve categories tree list | -
+GET | category | /api/category/[category_id]/ | Retrieve category detail with signers | -
 POST | category | /api/category/add_to_signer/[category_id]/[signer_id]/ | Add category to signer | -
 DELETE | category | /api/category/delete_from_signer/[category_id]/[signer_id]/ | Remove category from signer | -
 
