@@ -34,7 +34,10 @@ Methods:
 - Sign request by signer
     + Update signed_at
 + Reject request by user (/api/request/31 Method=DELETE)
-- Add category to signer
++ Add category to signer
++ Remove category from signer
+- Add category to groupsig
+- Remove category from groupsig
 - Pagination for autographs
 
 
