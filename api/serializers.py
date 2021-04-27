@@ -57,7 +57,7 @@ class GroupSig_SignerSerializer(serializers.ModelSerializer):
 class GroupSigDetailSerializer(serializers.ModelSerializer):
     signers = serializers.SerializerMethodField('get_signers')
     requests = serializers.SerializerMethodField('get_requests')
-    categories = SignerCategoryListSerializer(many=True)
+    categories = SignerCategoryListSerializer(many=True, required=False)
 
     def get_signers(self, groupsig):
         qs = GroupSig_Signer.objects.filter(
@@ -87,7 +87,7 @@ class GroupSigListSerializer(serializers.ModelSerializer):
 
 class GroupSigListTreeSerializer(serializers.ModelSerializer):
     signers = serializers.SerializerMethodField('get_signers')
-    categories = SignerCategoryListSerializer(many=True)
+    categories = SignerCategoryListSerializer(many=True, required=False)
 
     def get_signers(self, groupsig):
         qs = GroupSig_Signer.objects.filter(

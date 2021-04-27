@@ -29,6 +29,9 @@ Method | Entity | URL | Remarks | Parameters
 ------ | ------ | --- | ------- | ----------
 GET | groupsig | /api/groupsig/ | Retrieve active groups of signers list | -
 GET | groupsig | /api/groupsig/[groupsig_id]/ | Retrieve groupsig detail | -
+POST | groupsig | /api/groupsig/ | Create a new groupsig | name, price, response_time, avatar (binary)
+PATCH | groupsig | /api/groupsig/[groupsig_id] | Update a groupsig | Field to update
+DELETE | groupsig | /api/groupsig/[groupsig_id] | Delete a groupsig | -
 
 ### Request methods
 
