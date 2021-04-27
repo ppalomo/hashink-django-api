@@ -19,6 +19,9 @@ Method | Entity | URL | Remarks | Parameters
 GET | signer | /api/signer/ | Retrieve active signers list | -
 GET | signer | /api/signer/[signer_id]/ | Retrieve signer detail | -
 GET | signer | /api/signer/all/ | Retrieve signer and groups mixed list | -
+POST | signer | /api/signer/ | Create a new signer | first_name, last_name, email, address, price, response_time, avatar (binary), autograph (binary)
+PATCH | signer | /api/signer/[signer_id] | Update a signer | Field to update
+DELETE | signer | /api/signer/[signer_id] | Delete a signer | -
 
 ### Groupsig methods
 

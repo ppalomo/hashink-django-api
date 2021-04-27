@@ -12,7 +12,7 @@ class SignerCategoryListSerializer(serializers.ModelSerializer):
 
 
 class SignerListSerializer(serializers.ModelSerializer):
-    categories = SignerCategoryListSerializer(many=True)
+    categories = SignerCategoryListSerializer(many=True, required=False)
 
     class Meta:
         model = Signer
@@ -22,7 +22,7 @@ class SignerListSerializer(serializers.ModelSerializer):
 
 class SignerDetailSerializer(serializers.ModelSerializer):
     requests = serializers.SerializerMethodField('get_requests')
-    categories = SignerCategoryListSerializer(many=True)
+    categories = SignerCategoryListSerializer(many=True, required=False)
 
     def get_requests(self, signer):
         qs = Request_Signer.objects.filter(signer=signer)
