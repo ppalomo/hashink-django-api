@@ -9,12 +9,14 @@ class Signer(models.Model):
     email = models.EmailField(max_length=245, blank=False)
     address = models.CharField(
         max_length=50, null=True, blank=True, unique=True)
+    description = models.TextField(blank=True)
     price = models.FloatField(blank=False, default=0)
     response_time = models.IntegerField(blank=False, default=0)
     avatar = models.ImageField(
         upload_to='avatars', blank=True, default="avatars/default.jpg")
     autograph = models.ImageField(
         upload_to='autographs', blank=True, default="autographs/default.jpg")
+    number_of_prints = models.IntegerField(blank=False, default=0)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

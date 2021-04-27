@@ -8,7 +8,7 @@ class SignerCategoryListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'number_of_prints')
 
 
 class SignerListSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class SignerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Signer
         fields = ('id', 'full_name', 'address', 'price_eth',
-                  'response_time', 'avatar', 'autograph', 'active', 'categories')
+                  'response_time', 'avatar', 'autograph', 'number_of_prints', 'active', 'categories')
 
 
 class SignerDetailSerializer(serializers.ModelSerializer):
@@ -31,8 +31,8 @@ class SignerDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Signer
-        fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'price',
-                  'price_eth', 'response_time', 'avatar', 'autograph', 'active', 'created_at', 'requests', 'categories')
+        fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'description', 'price',
+                  'price_eth', 'response_time', 'avatar', 'autograph', 'number_of_prints', 'active', 'created_at', 'requests', 'categories')
 
 
 # endregion
