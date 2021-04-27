@@ -8,7 +8,7 @@ class SignerCategoryListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'number_of_prints')
+        fields = ('id', 'name')
 
 
 class SignerListSerializer(serializers.ModelSerializer):
