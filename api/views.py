@@ -31,6 +31,12 @@ class SignerViewSet(viewsets.ModelViewSet):
         serializer = SignerListSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        signer = self.get_object()
+        signer.active = False
+        signer.save()
+        return Response(data='delete success')
+
     # def retrieve(self, request, pk=None):
     #     queryset = User.objects.all()
     #     user = get_object_or_404(queryset, pk=pk)
