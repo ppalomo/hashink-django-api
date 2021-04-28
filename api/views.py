@@ -60,6 +60,13 @@ class SignerViewSet(viewsets.ModelViewSet):
         serializer = SignerGroupsigGenericSerializer(data, many=True)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def print(self, request, *args, **kwargs):
+        signer = self.get_object()
+        signer.number_of_prints += 1
+        signer.save()
+        return Response(data='Printed signer')
+
 
 # endregion
 
