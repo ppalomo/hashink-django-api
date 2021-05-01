@@ -242,7 +242,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 autographs(where:{%s}) {
                     id
                     owner
-                    creator
+                    creators
                     imageURI
                     metadataURI
                 }
@@ -265,11 +265,11 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 autographs(where:{%s}) {
                     id
                     owner
-                    creator
+                    creators
                     imageURI
                     metadataURI
                 }
-            }''' % '''creator:"{}"'''.format(kwargs['signer'])
+            }''' % '''creators_contains:["{}"]'''.format(kwargs['signer'])
         query = gql(query_string)
         response = client.execute(query)
         serializer = AutographSerializer(response['autographs'], many=True)
