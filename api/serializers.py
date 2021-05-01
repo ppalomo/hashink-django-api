@@ -214,14 +214,15 @@ class SignerGroupsigGenericSerializer(serializers.Serializer):
 class AutographSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     owner = serializers.CharField()
-    creator = serializers.CharField()
+    creators = serializers.ListField(child=serializers.CharField())
     imageURI = serializers.CharField()
     metadataURI = serializers.CharField()
-    signer = serializers.SerializerMethodField('get_signer')
+    signers = serializers.SerializerMethodField('get_signers')
 
-    def get_signer(self, item):
-        signer = Signer.objects.filter(address__iexact=item['creator']).first()
-        serializer = SignerListSerializer(instance=signer, many=False)
+    def get_signers(self, item):
+        signers = Signer.objects.filter(
+            address__iregex=r'(' + '|'.join(item['creators']) + ')')
+        serializer = SignerListSerializer(instance=signers, many=True)
         return serializer.data
 
 # endregion

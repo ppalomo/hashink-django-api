@@ -219,7 +219,7 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 autographs(first: 20) {
                     id
                     owner
-                    creator
+                    creators
                     imageURI
                     metadataURI
                 }
