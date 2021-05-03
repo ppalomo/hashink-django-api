@@ -41,6 +41,7 @@
 | GET    | request | /api/request/?requester_address\_\_iexact=[requester_address] | Retrieve requests list by requester address            | -                              |
 | POST   | request | /api/request/                                                 | Create a new request for a single signer               | requester_address, signer_id   |
 | POST   | request | /api/request/                                                 | Create a new request for a group of signers (groupsig) | requester_address, groupsig_id |
+| POST   | request | /api/request/[request_id]/mint/                               | Mint an existing request                               | -                              |
 | DELETE | request | /api/request/[request_id]                                     | Delete a request                                       | -                              |
 
 ### Category methods

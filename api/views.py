@@ -111,6 +111,13 @@ class RequestViewSet(viewsets.ModelViewSet):
     filter_class = RequestListFilter
     permission_classes = [IsReadOnly, ]
 
+    def get_permissions(self):
+        if self.action in ('mint',):
+            self.permission_classes = [permissions.AllowAny, ]
+        else:
+            self.permission_classes = [IsReadOnly, ]
+        return super(self.__class__, self).get_permissions()
+
     def get_serializer_class(self):
         if self.action == 'list':
             return RequestListSerializer
@@ -165,6 +172,13 @@ class RequestViewSet(viewsets.ModelViewSet):
         return Response(data='delete success')
         # else:
         # return Response(None)
+
+    @action(methods=['post'], detail=True)
+    def mint(self, request, *args, **kwargs):
+        request = self.get_object()
+        request.state = 1
+        request.save()
+        return Response(data='request minted')
 
 
 # endregion
@@ -347,5 +361,6 @@ class DropViewSet(viewsets.ModelViewSet):
 
         else:
             return Response(data='The drop is closed')
+
 
 # endregion
