@@ -294,24 +294,6 @@ class CharityViewSet(viewsets.ModelViewSet):
     serializer_class = ChairityListSerializer
     permission_classes = [IsReadOnly, ]
 
-    # def list(self, request):
-    #     queryset = GroupSig.objects.filter(active=True)
-    #     serializer = GroupSigListTreeSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
-    # class GroupSigViewSet(viewsets.ModelViewSet):
-    # queryset = GroupSig.objects.all()
-
-    # def get_serializer_class(self):
-    #     if self.action == 'retrieve':
-    #         return GroupSigDetailSerializer
-    #     return GroupSigDetailSerializer
-
-    # def list(self, request):
-    #     queryset = GroupSig.objects.filter(active=True)
-    #     serializer = GroupSigListTreeSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
 # endregion
 
 # region Drop
