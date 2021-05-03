@@ -99,10 +99,13 @@ class Request(models.Model):
     price = models.FloatField(blank=False, default=0)
     response_time = models.IntegerField(blank=False, default=0)
     state = models.IntegerField(blank=False, null=False, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     signers = models.ManyToManyField(
         Signer, related_name='requests', blank=True, through='Request_Signer')
+    image = models.ImageField(
+        upload_to='backgrounds', blank=True, default="backgrounds/default.jpg")
+    message = models.CharField(max_length=200, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def name(self):
@@ -157,5 +160,63 @@ class Category(models.Model):
     def __str__(self):
         return "{} - {} ({})".format(self.id, self.name, self.parent_category)
 
+
+# endregion
+
+# region Charity
+
+class Charity(models.Model):
+    name = models.CharField(max_length=100, blank=False)
+    address = models.CharField(
+        max_length=50, null=True, blank=True, unique=True)
+    avatar = models.ImageField(
+        upload_to='avatars', blank=True, default="avatars/default.jpg")
+    website = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "charity"
+        verbose_name_plural = "charities"
+        ordering = ['name']
+
+    def __str__(self):
+        return "{} - {}".format(self.id, self.name)
+
+
+# endregion
+
+# region Drop
+
+class Drop(models.Model):
+    signer = models.ForeignKey(
+        Signer, null=False, blank=False, on_delete=models.RESTRICT)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    price = models.FloatField(blank=False, default=0)
+    max_requests = models.IntegerField(blank=False, default=10)
+    num_requests = models.IntegerField(blank=False, default=0)
+    charity_percent = models.IntegerField(blank=False, default=0)
+    charity = models.ForeignKey(
+        Charity, null=True, blank=True, on_delete=models.RESTRICT)
+    total_raised = models.FloatField(blank=False, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def price_eth(self):
+        return self.price / 1e18
+
+    @property
+    def total_raised_eth(self):
+        return self.total_raised / 1e18
+
+    class Meta:
+        verbose_name = "drop"
+        verbose_name_plural = "drops"
+        ordering = ['starts_at']
+
+    def __str__(self):
+        return "{} - {} ({})".format(self.id, self.signer.full_name, self.starts_at)
 
 # endregion

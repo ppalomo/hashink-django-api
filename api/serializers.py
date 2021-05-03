@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signer, Category
+from api.models import Signer, GroupSig, GroupSig_Signer, Request, Request_Signer, Category, Charity, Drop
 
 # region Signer
 
@@ -33,6 +33,15 @@ class SignerDetailSerializer(serializers.ModelSerializer):
         model = Signer
         fields = ('first_name', 'last_name', 'full_name', 'email', 'address', 'description', 'price',
                   'price_eth', 'response_time', 'avatar', 'autograph', 'number_of_prints', 'active', 'created_at', 'requests', 'categories')
+
+
+class SignerDropSerializer(serializers.ModelSerializer):
+    categories = SignerCategoryListSerializer(many=True, required=False)
+
+    class Meta:
+        model = Signer
+        fields = ('id', 'full_name', 'address', 'avatar',
+                  'autograph', 'categories', 'description')
 
 
 # endregion
@@ -128,7 +137,7 @@ class RequestDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Request
-        fields = ('id', 'requester_address', 'name', 'price',
+        fields = ('id', 'requester_address', 'name', 'price', 'image', 'message',
                   'response_time', 'state', 'groupsig', 'signer', 'signers', 'created_at', 'updated_at')
 
 
@@ -144,7 +153,7 @@ class RequestListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = ('id', 'requester_address', 'name', 'price',
-                  'response_time', 'state', 'signers')
+                  'response_time', 'state', 'signers', 'image', 'message')
 
 # endregion
 
@@ -224,5 +233,40 @@ class AutographSerializer(serializers.Serializer):
             address__iregex=r'(' + '|'.join(item['creators']) + ')')
         serializer = SignerListSerializer(instance=signers, many=True)
         return serializer.data
+
+# endregion
+
+# region Charity
+
+
+class ChairityListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Charity
+        fields = ('id', 'name', 'address', 'avatar', 'website')
+
+# endregion
+
+# region Drop
+
+
+class DropListSerializer(serializers.ModelSerializer):
+    signer = SignerDropSerializer(many=False, required=False)
+    charity = ChairityListSerializer(many=False, required=False)
+
+    class Meta:
+        model = Drop
+        fields = ('id', 'starts_at', 'ends_at', 'price', 'price_eth', 'max_requests', 'num_requests',
+                  'charity_percent', 'signer', 'charity', 'total_raised', 'total_raised_eth')
+
+
+class DropDetailSerializer(serializers.ModelSerializer):
+    signer = SignerDropSerializer(many=False, required=False)
+    charity = ChairityListSerializer(many=False, required=False)
+
+    class Meta:
+        model = Drop
+        fields = ('id', 'starts_at', 'ends_at', 'price', 'price_eth', 'max_requests', 'num_requests',
+                  'charity_percent', 'signer', 'charity', 'total_raised', 'total_raised_eth')
 
 # endregion

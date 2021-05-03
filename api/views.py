@@ -3,16 +3,19 @@ import datetime
 from .utils import get_subgraph_endpoint
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, permissions
+from .permissions import IsAdminOrReadOnly, IsReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters import rest_framework as filters
-from api.models import Signer, GroupSig, GroupSig_Signer, Request, Category
+from api.models import Signer, GroupSig, GroupSig_Signer, Request, Category, Charity, Drop
 from .serializers import SignerListSerializer, SignerDetailSerializer
 from .serializers import GroupSigListSerializer, GroupSigListTreeSerializer, GroupSigDetailSerializer
 from .serializers import RequestListSerializer, RequestDetailSerializer
 from .serializers import CategoryTreeListSerializer, CategoryFlatListSerializer, CategorySignersListSerializer
 from .serializers import SignerGroupsigGenericSerializer, AutographSerializer
+from .serializers import ChairityListSerializer
+from .serializers import DropListSerializer, DropDetailSerializer
 from operator import itemgetter
 
 # region Signer
@@ -20,6 +23,7 @@ from operator import itemgetter
 
 class SignerViewSet(viewsets.ModelViewSet):
     queryset = Signer.objects.all()
+    permission_classes = [IsReadOnly, ]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -75,6 +79,7 @@ class SignerViewSet(viewsets.ModelViewSet):
 
 class GroupSigViewSet(viewsets.ModelViewSet):
     queryset = GroupSig.objects.all()
+    permission_classes = [IsReadOnly, ]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -104,6 +109,7 @@ class RequestViewSet(viewsets.ModelViewSet):
     serializer_class = RequestDetailSerializer
     queryset = Request.objects.filter(state=0)
     filter_class = RequestListFilter
+    permission_classes = [IsReadOnly, ]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -169,6 +175,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all().order_by('name')
     serializer_class = CategoryFlatListSerializer
+    permission_classes = [IsReadOnly, ]
 
     def retrieve(self, request, pk=None):
         queryset = Category.objects.get(pk=pk)
@@ -197,6 +204,7 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
         return Response(data='Category deleted')
 
 # endregion
+
 # region Autograph
 
 
@@ -276,5 +284,86 @@ class AutographViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         return Response(serializer.data)
 
+
+# endregion
+
+# region Charity
+
+class CharityViewSet(viewsets.ModelViewSet):
+    queryset = Charity.objects.all()
+    serializer_class = ChairityListSerializer
+    permission_classes = [IsReadOnly, ]
+
+    # def list(self, request):
+    #     queryset = GroupSig.objects.filter(active=True)
+    #     serializer = GroupSigListTreeSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+    # class GroupSigViewSet(viewsets.ModelViewSet):
+    # queryset = GroupSig.objects.all()
+
+    # def get_serializer_class(self):
+    #     if self.action == 'retrieve':
+    #         return GroupSigDetailSerializer
+    #     return GroupSigDetailSerializer
+
+    # def list(self, request):
+    #     queryset = GroupSig.objects.filter(active=True)
+    #     serializer = GroupSigListTreeSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+# endregion
+
+# region Drop
+
+
+class DropViewSet(viewsets.ModelViewSet):
+    queryset = Drop.objects.all()
+    # permission_classes = [IsReadOnly, ]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return DropListSerializer
+        if self.action == 'retrieve':
+            return DropDetailSerializer
+        return DropDetailSerializer
+
+    @action(methods=['post'], detail=True)
+    def request(self, request, *args, **kwargs):
+        drop = self.get_object()
+
+        utc = pytz.UTC
+        now = datetime.datetime.now().replace(tzinfo=utc)
+        starts_at = drop.starts_at.replace(tzinfo=utc)
+        ends_at = drop.ends_at.replace(tzinfo=utc)
+
+        if now >= starts_at and now < ends_at and drop.num_requests < drop.max_requests:
+            requester_address = request.data.get('requester_address', None)
+            image = request.data.get('image', None)
+            message = request.data.get('message', None)
+
+            # Creating new drop request
+            new_request = Request.objects.create(
+                requester_address=requester_address,
+                price=drop.price,
+                response_time=2,
+                signer=drop.signer,
+                groupsig=None,
+                image=image,
+                message=message
+            )
+            new_request.signers.set([drop.signer])
+            new_request.save()
+
+            # Updating drop data
+            drop.num_requests += 1
+            drop.total_raised += drop.price
+            drop.save()
+
+            serializer = DropDetailSerializer(drop)
+            return Response(serializer.data)
+
+        else:
+            return Response(data='The drop is closed')
 
 # endregion

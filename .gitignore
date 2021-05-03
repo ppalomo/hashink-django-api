@@ -2,6 +2,5 @@
 /api/__pycache__
 
 # images
-/avatars
-/autographs
+/media
 *.pyc
