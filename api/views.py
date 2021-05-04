@@ -22,30 +22,21 @@ from operator import itemgetter
 
 
 class SignerViewSet(viewsets.ModelViewSet):
-    queryset = Signer.objects.all()
+    queryset = Signer.objects.filter(active=True)
     permission_classes = [IsReadOnly, ]
 
     def get_serializer_class(self):
+        if self.action == 'list':
+            return SignerListSerializer
         if self.action == 'retrieve':
             return SignerDetailSerializer
         return SignerDetailSerializer
-
-    def list(self, request):
-        queryset = Signer.objects.filter(active=True)
-        serializer = SignerListSerializer(queryset, many=True)
-        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         signer = self.get_object()
         signer.active = False
         signer.save()
         return Response(data='delete success')
-
-    # def retrieve(self, request, pk=None):
-    #     queryset = User.objects.all()
-    #     user = get_object_or_404(queryset, pk=pk)
-    #     serializer = UserSerializer(user)
-    #     return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def all(self, request, pk=None):
@@ -315,7 +306,14 @@ class CharityViewSet(viewsets.ModelViewSet):
 
 class DropViewSet(viewsets.ModelViewSet):
     queryset = Drop.objects.all()
-    # permission_classes = [IsReadOnly, ]
+    permission_classes = [IsReadOnly, ]
+
+    def get_permissions(self):
+        if self.action in ('request',):
+            self.permission_classes = [permissions.AllowAny, ]
+        else:
+            self.permission_classes = [IsReadOnly, ]
+        return super(self.__class__, self).get_permissions()
 
     def get_serializer_class(self):
         if self.action == 'list':
