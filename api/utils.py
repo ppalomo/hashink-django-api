@@ -1,6 +1,13 @@
 import os
 
 
+def get_debug():
+    if os.environ.get('ENVIRONMENT') is None:
+        return True
+    else:
+        return False
+
+
 def get_environment():
     if os.environ.get('ENVIRONMENT') is None:
         return 'DEV'
