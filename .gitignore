@@ -1,6 +1,10 @@
 *.pyc
 /api/__pycache__
 
-# images
+/staticfiles
 /media
 *.pyc
+
+/hashink_api/api/__pycache__/views.cpython-39.pyc
+/hashink_api/__pycache__/settings.cpython-39.pyc
+
