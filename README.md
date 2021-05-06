@@ -3,10 +3,11 @@
 ## Current endpoints
 
 **Test:** https://hashink-api-test.herokuapp.com/
+**Prod:** https://hashink-api.herokuapp.com/
 
 ## Database schema
 
-![alt text](https://github.com/HashInk/api/blob/develop/static/db_schema.jpeg?raw=true)
+![alt text](https://github.com/ppalomo/hashink-django-api/blob/master/staticfiles/db_schema.jpeg?raw=true)
 
 ## Available methods
 
